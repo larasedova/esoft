@@ -1,0 +1,10 @@
+venv/
+.env
+__pycache__/
+uploads/*
+*.pyc
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
