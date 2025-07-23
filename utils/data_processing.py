@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def analyze_data(filepath):
     # Чтение файла
     if filepath.endswith('.csv'):
@@ -15,6 +16,7 @@ def analyze_data(filepath):
     }
 
     return result
+
 
 def clean_data(filepath):
     # Чтение файла
