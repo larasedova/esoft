@@ -62,3 +62,43 @@ def upload_file():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 400
+
+    @bp.route('/data/stats/<int:file_id>', methods=['GET'])
+    def get_stats(file_id):
+        analysis = AnalysisResult.query.filter_by(file_id=file_id).first()
+
+        if not analysis:
+            return jsonify({'error': 'Analysis not found'}), 404
+
+        return jsonify({
+            'mean': analysis.mean_values,
+            'median': analysis.median_values,
+            'correlation': analysis.correlation_matrix
+        }), 200
+
+    @bp.route('/data/clean/<int:file_id>', methods=['GET'])
+    def clean_file_data(file_id):
+        file = File.query.get(file_id)
+
+        if not file:
+            return jsonify({'error': 'File not found'}), 404
+
+        try:
+            cleaned_df = clean_data(file.filepath)
+
+            # Сохранение очищенного файла
+            cleaned_filename = f"cleaned_{file.filename}"
+            cleaned_filepath = os.path.join(UPLOAD_FOLDER, cleaned_filename)
+
+            if file.filename.endswith('.csv'):
+                cleaned_df.to_csv(cleaned_filepath, index=False)
+            else:
+                cleaned_df.to_excel(cleaned_filepath, index=False)
+
+            return jsonify({
+                'message': 'Data cleaned successfully',
+                'cleaned_file': cleaned_filename
+            }), 200
+
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
