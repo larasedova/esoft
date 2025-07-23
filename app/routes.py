@@ -2,10 +2,13 @@ from flask import Blueprint, request, jsonify, send_file
 import os
 import pandas as pd
 from werkzeug.utils import secure_filename
+from utils.data_processing import analyze_data, clean_data
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 from models.db_models import File, AnalysisResult
 from app import db
-from utils.data_processing import analyze_data, clean_data
-import matplotlib.pyplot as plt
 
 bp = Blueprint('api', __name__)
 
