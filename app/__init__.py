@@ -1,15 +1,21 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from config import Config
+from config import config  # Импортируем словарь конфигураций
 
 # Инициализация расширений
 db = SQLAlchemy()
 
 
-def create_app():
+def create_app(config_name='default'):
+    """Фабрика приложений с поддержкой разных конфигураций"""
     # Создание экземпляра приложения
     app = Flask(__name__)
-    app.config.from_object(Config)
+
+    # Загрузка конфигурации
+    app.config.from_object(config[config_name])
+
+    # Инициализация приложения (создание папок)
+    config[config_name].init_app(app)
 
     # Инициализация БД
     db.init_app(app)

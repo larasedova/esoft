@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 # Загрузка переменных окружения
 load_dotenv()
 
-
 # Базовый класс конфигурации
 class Config:
     # Безопасность
@@ -16,21 +15,23 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Загрузка файлов
-    UPLOAD_FOLDER = 'uploads'
+    UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
     ALLOWED_EXTENSIONS = {'csv', 'xlsx'}
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB
 
-    # Визуализация
-    MATPLOTLIB_FONT_CACHE = '/tmp/matplotlib'
+    # Визуализация (исправленный путь для Windows)
+    MATPLOTLIB_FONT_CACHE = os.path.join(os.environ.get('TEMP', os.getcwd()), 'matplotlib')
 
     # Автоматическое создание папок при инициализации
     @staticmethod
     def init_app(app):
-        # Создаем папку для загрузок, если не существует
-        Path(app.config['UPLOAD_FOLDER']).mkdir(exist_ok=True)
+        # Создаем папку для загрузок
+        upload_path = Path(app.config['UPLOAD_FOLDER'])
+        upload_path.mkdir(parents=True, exist_ok=True)
 
         # Создаем папку для кэша matplotlib
-        Path(app.config['MATPLOTLIB_FONT_CACHE']).mkdir(exist_ok=True)
+        cache_path = Path(app.config['MATPLOTLIB_FONT_CACHE'])
+        cache_path.mkdir(parents=True, exist_ok=True)
 
 
 # Конфигурация для разработки
